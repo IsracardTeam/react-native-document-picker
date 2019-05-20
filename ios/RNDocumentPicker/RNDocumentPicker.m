@@ -95,12 +95,21 @@ RCT_EXPORT_METHOD(show:(NSDictionary *)options
 
         [url startAccessingSecurityScopedResource];
 
+        //taking the path of the file selected
+        NSString *path = [url path];
+        //converting to NSData
+        NSData *data = [[NSFileManager defaultManager] contentsAtPath:path];
+        //converting to base64 string
+        NSString * base64String = [data base64EncodedStringWithOptions:kNilOptions];
+        
+        
         NSFileCoordinator *coordinator = [[NSFileCoordinator alloc] init];
         __block NSError *error;
 
         [coordinator coordinateReadingItemAtURL:url options:NSFileCoordinatorReadingResolvesSymbolicLink error:&error byAccessor:^(NSURL *newURL) {
             NSMutableDictionary* result = [NSMutableDictionary dictionary];
 
+            [result setValue:base64String forKey:@"data"];
             [result setValue:newURL.absoluteString forKey:@"uri"];
             [result setValue:[newURL lastPathComponent] forKey:@"fileName"];
 
