@@ -64,7 +64,7 @@ public class DocumentPicker extends ReactContextBaseJavaModule implements Activi
     }
 
     @ReactMethod
-    public void show(ReadableMap args, Callback callback) {
+     public void show(ReadableMap args, Callback callback) {
         Intent intent;
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.KITKAT) {
             intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
@@ -73,11 +73,15 @@ public class DocumentPicker extends ReactContextBaseJavaModule implements Activi
         }
         intent.addCategory(Intent.CATEGORY_OPENABLE);
 
+        
         if (!args.isNull("filetype")) {
             ReadableArray filetypes = args.getArray("filetype");
-            if (filetypes.size() > 0) {
-                intent.setType(filetypes.getString(0));
-            }
+            String[] extraMimeTrypes = new String[filetypes.size()];
+                intent.setType("*/*");
+                for(int i = 0; i < filetypes.size();i++){
+                    extraMimeTrypes[i] = filetypes.getString(i);
+                }
+                intent.putExtra(Intent.EXTRA_MIME_TYPES, extraMimeTrypes);
         }
 
         this.callback = callback;
